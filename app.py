@@ -97,7 +97,7 @@ app = Flask(__name__)
 #     # print('dataset', dataset)
 #     return code
 
-def recommendRoot(code):
+async def recommendRoot(code):
     # %%
 ##Import Libraries
     import pandas as pd
@@ -278,13 +278,14 @@ def recommendRoot(code):
 
 
 @app.route("/evaluate", methods=['POST'])
-def hello_world():
+async def hello_world():
     data = request.json
     code = data['name']
+    ok = await recommendRoot(code)
     result = {
-        "name": "ok"
+        "name": ok
     }
-    return recommendRoot(code)
+    return ok
 
 if __name__ == "__main__":
     app.run(port=8080,debug= True)         
