@@ -1,7 +1,11 @@
 
    
 from flask import Flask, redirect, url_for, render_template, request
-import time
+from difflib import SequenceMatcher
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 # import pandas as pd
 # from sklearn.feature_extraction.text import TfidfVectorizer
@@ -99,11 +103,9 @@ app = Flask(__name__)
 #     # print('dataset', dataset)
 #     return code
 
-async def recommendRoot(code):
+async def recommendRoot(id):
     # %%
 ##Import Libraries
-    import pandas as pd
-
     # %%
     dataset= pd.read_csv("product_cnpm.csv", engine='python', error_bad_lines=False)
 
@@ -143,8 +145,6 @@ async def recommendRoot(code):
     ##Importing vectoriser
 
     # %%
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    import numpy as np
     vec=TfidfVectorizer()
 
     # %%
@@ -157,7 +157,6 @@ async def recommendRoot(code):
     #print (vecs)
 
     # %%
-    from sklearn.metrics.pairwise import cosine_similarity
 
     # %%
     sim= cosine_similarity(vecs) 
@@ -205,8 +204,6 @@ async def recommendRoot(code):
     # Laptop APPLE MacBook Pro 2020 MYD82SA/A ( 13.3"" Apple M1/8GB/256GB SSD/macOS/1.4kg)",3200000.0,NULL,9440
 
     # %%
-    from difflib import SequenceMatcher
-
     def similar(a, b):
         return SequenceMatcher(None, a, b).ratio()
 
@@ -225,21 +222,21 @@ async def recommendRoot(code):
 
 
     # %%
-    async def recommend(name):
+    async def recommend(product_id):
         # product_id=data[data.name==name]["ids"].values[0]
         # print("product_id", product_id)
 
         
-        mostSimilar = 0
-        product_id = 1
+        # mostSimilar = 0
+        # product_id = 2
 
-        for eachName in data.name:
-            similarName = similar(eachName, name)
-        if similarName > mostSimilar:
-            mostSimilar = similarName
-            product_id = data[data.name == eachName]["ids"].values[0]
+        # for eachName in data.name:
+        #     similarName = similar(eachName, name)
+        # if similarName > mostSimilar:
+        #     mostSimilar = similarName
+        #     product_id = data[data.name == eachName]["ids"].values[0]
 
-        print('product_id', product_id)
+        # print('product_id', product_id)
 
         scores= list(enumerate(sim[product_id]))
     #    print("scores", scores)
@@ -255,8 +252,10 @@ async def recommendRoot(code):
             catogoryEachProduct = data[products[0]==data["ids"]]["category_id"].values[0]   
             if catogoryEachProduct == data["category_id"][product_id]:
                 sorted_Score_By_Categories.append (products)
-        sorted_Title=[data[products[0]==data["ids"]]["name"].values[0] for products in sorted_Score_By_Categories]      
+        sorted_Title=[data[products[0]==data["ids"]]["ids"].values[0] for products in sorted_Score_By_Categories]      
         # print("sorted_Title", sorted_Title)
+        print("sorted_Score_By_Categories", sorted_Score_By_Categories)
+
         return sorted_Title
 
     # %%
@@ -271,7 +270,7 @@ async def recommendRoot(code):
         return first_ten
 
     # %%
-    lst=await recommend("Laptop APPLE MacBook Pro 2020 MYD82SA/A ( 13.3"" Apple M1/8GB/256GB SSD/macOS/1.4kg)")
+    lst=await recommend(id)
     print ("lst", lst)
     m= recommend_ten(lst)
     # time.sleep(10)
@@ -279,15 +278,15 @@ async def recommendRoot(code):
     # %%
     print(m)
     result = {
-        "name": str(m)
+        "productList": str(m)
     }
     return result
 
 
-@app.route("/evaluate", methods=['POST'])
+@app.route("/recommend", methods=['POST'])
 async def hello_world():
     data = request.json
-    code = data['name']
+    code = data['id']
     ok = await recommendRoot(code)
     # result = {
     #     "name": ok
