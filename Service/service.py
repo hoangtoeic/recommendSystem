@@ -8,7 +8,7 @@ async def recommendRoot(id, exceptProductID):
     # %%
 ##Import Libraries
     # %%
-    dataset= pd.read_csv("product_cnpm.csv", engine='python', error_bad_lines=False)
+    dataset= pd.read_csv('./data/product_cnpm.csv', engine='python', error_bad_lines=False)
 
     # %%
     dataset.head(130)
