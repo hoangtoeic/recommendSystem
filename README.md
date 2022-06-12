@@ -1,5 +1,5 @@
 
-# Movie Recommendation System
+# Recommendation System
 
 
 
@@ -8,7 +8,7 @@
 Clone the project
 
 ```bash
-  git clone https://github.com/Vibhav0/recommendation-system-cosine-similarity.git
+  git clone   git clone https://github.com/Vibhav0/recommendation-system-cosine-similarity.git
 ```
 
 Go to the project directory
@@ -22,11 +22,3 @@ Install dependencies
 ```bash
   pip3 install -r requirements.txt
 ```
-
-To start crawling (to collect data)
-
-```bash
-  scrapy crawl imdb-bot
-```
-
-  
